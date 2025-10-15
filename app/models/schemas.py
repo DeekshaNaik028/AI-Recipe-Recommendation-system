@@ -116,11 +116,26 @@ class RecipeRequest(BaseModel):
             raise ValueError('At least one ingredient is required')
         return v
 
-class IngredientDetectionResponse(BaseModel):
+# NEW: Voice/Audio ingredient detection
+class VoiceIngredientRequest(BaseModel):
+    """Request model for text-based ingredient extraction"""
+    text: str
+    
+    @validator('text')
+    def validate_text(cls, v):
+        if len(v.strip()) < 3:
+            raise ValueError('Text must be at least 3 characters')
+        return v.strip()
+
+class IngredientExtractionResponse(BaseModel):
+    """Response for ingredient extraction (voice or text)"""
     ingredients: List[str]
-    confidence_scores: Dict[str, float]
+    validated_ingredients: Optional[List[str]] = None
+    suggestions: Optional[Dict[str, str]] = None
+    transcription: Optional[str] = None  # Original transcription if from audio
     processing_time: float
-    image_processed: bool
+    source: str  # "audio" or "text"
+    confidence: Optional[float] = None
 
 class MoodLog(BaseModel):
     user_id: str
@@ -132,6 +147,7 @@ class RecipeHistory(BaseModel):
     recipe: RecipeResponse
     ingredients_used: List[str]
     mood: MoodEnum
+    input_method: Optional[str] = "manual"  # "manual", "voice", "text"
     created_at: datetime = datetime.utcnow()
     rating: Optional[int] = None
     notes: Optional[str] = None
@@ -140,3 +156,22 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     expires_in: int
+    expires_at: str
+
+# Statistics and Analytics
+class IngredientUsageStats(BaseModel):
+    ingredient: str
+    usage_count: int
+    last_used: datetime
+
+class MoodTrendData(BaseModel):
+    date: str
+    mood: str
+    count: int
+
+class UserStats(BaseModel):
+    total_recipes_generated: int
+    favorite_ingredients: List[IngredientUsageStats]
+    mood_trends: List[MoodTrendData]
+    most_used_cuisine: Optional[str]
+    avg_cooking_time: Optional[float]

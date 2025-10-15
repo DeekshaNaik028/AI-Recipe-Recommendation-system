@@ -1,0 +1,175 @@
+# ==========================================
+# .gitattributes - Line Ending Configuration
+# ==========================================
+
+# Auto detect text files and normalize line endings to LF on commit
+* text=auto
+
+# ==========================================
+# Source Code
+# ==========================================
+
+# Python files - always use LF
+*.py text eol=lf
+*.pyx text eol=lf
+*.pxd text eol=lf
+*.pxi text eol=lf
+
+# ==========================================
+# Configuration Files
+# ==========================================
+
+# Shell scripts - always use LF
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Batch files - always use CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Environment files - use LF
+.env* text eol=lf
+*.env text eol=lf
+
+# Config files - use LF
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+*.conf text eol=lf
+
+# Requirements and dependencies
+requirements*.txt text eol=lf
+Pipfile text eol=lf
+pyproject.toml text eol=lf
+setup.py text eol=lf
+setup.cfg text eol=lf
+
+# ==========================================
+# Documentation
+# ==========================================
+
+*.md text eol=lf
+*.rst text eol=lf
+*.txt text eol=lf
+LICENSE text eol=lf
+README* text eol=lf
+
+# ==========================================
+# Docker
+# ==========================================
+
+Dockerfile text eol=lf
+docker-compose*.yml text eol=lf
+.dockerignore text eol=lf
+
+# ==========================================
+# Git Files
+# ==========================================
+
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.gitmodules text eol=lf
+
+# ==========================================
+# Web Files
+# ==========================================
+
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.vue text eol=lf
+
+# ==========================================
+# Binary Files (Don't normalize)
+# ==========================================
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.webp binary
+
+# Audio files
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.flac binary
+*.aac binary
+*.m4a binary
+*.webm binary
+
+# Video files
+*.mp4 binary
+*.avi binary
+*.mov binary
+*.mkv binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.bz2 binary
+*.7z binary
+*.rar binary
+
+# Documents
+*.pdf binary
+*.doc binary
+*.docx binary
+*.xls binary
+*.xlsx binary
+*.ppt binary
+*.pptx binary
+
+# Databases
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+
+# ML Models
+*.pt binary
+*.pth binary
+*.h5 binary
+*.pkl binary
+*.onnx binary
+*.tflite binary
+
+# Other binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.pyc binary
+
+# ==========================================
+# Diff Settings for Specific Files
+# ==========================================
+
+# Python files - use python diff driver
+*.py diff=python
+*.pyw diff=python
+
+# Jupyter notebooks - treat as text but show diffs
+*.ipynb text eol=lf diff=jupyternotebook
+
+# ==========================================
+# Merge Strategies
+# ==========================================
+
+# Don't merge database files
+*.db merge=binary
+*.sqlite merge=binary
+
+# Don't merge compiled files
+*.pyc merge=binary
+*.pyo merge=binary

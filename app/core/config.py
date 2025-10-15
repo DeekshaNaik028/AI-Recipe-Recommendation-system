@@ -5,7 +5,7 @@ from functools import lru_cache
 class Settings(BaseSettings):
     # Application Settings
     APP_NAME: str = "AI Recipe Recommendation System"
-    VERSION: str = "1.0.0"
+    VERSION: str = "2.0.0"  # Updated version
     DEBUG: bool = False
     ENVIRONMENT: str = "development"
     
@@ -33,19 +33,21 @@ class Settings(BaseSettings):
     # AI Model Settings
     GEMINI_API_KEY: str = "your-gemini-api-key-here"
     
-    # Google Cloud Vision API - ADD THESE LINES
-    GOOGLE_VISION_CREDENTIALS_PATH: str = ""
-    ENABLE_VISION_API: bool = False
-    VISION_API_MONTHLY_LIMIT: int = 166
+    # Voice Input Settings (NEW)
+    ENABLE_VOICE_INPUT: bool = True
+    MAX_AUDIO_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
+    SUPPORTED_AUDIO_FORMATS: List[str] = ["wav", "mp3", "ogg", "webm", "m4a"]
+    AUDIO_TRANSCRIPTION_LANGUAGE: str = "en"
     
     # Model Configuration
     MODEL_CONFIDENCE_THRESHOLD: float = 0.5
-    MAX_INGREDIENTS_DETECTED: int = 10
+    MAX_INGREDIENTS_DETECTED: int = 15  # Increased for voice input
     MAX_RECIPE_GENERATION_RETRIES: int = 3
     
     # File Upload Settings
     MAX_FILE_SIZE: int = 10 * 1024 * 1024
     UPLOAD_DIR: str = "./uploads"
+    AUDIO_UPLOAD_DIR: str = "./uploads/audio"
     
     # Logging Settings
     LOG_LEVEL: str = "INFO"
@@ -65,7 +67,6 @@ class Settings(BaseSettings):
     
     # Development
     MOCK_AI_RESPONSES: bool = False
-    MOCK_INGREDIENT_DETECTION: bool = False
     
     class Config:
         env_file = ".env"
