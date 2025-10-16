@@ -28,8 +28,24 @@ export default function App() {
   const { isAuthenticated, loading } = useAuth();
   const { toasts, removeToast } = useToast();
 
+  // Handle navigation
   useEffect(() => {
-    // Close sidebar on route change
+    const handleNavigation = (e) => {
+      const href = e.target.closest('a')?.getAttribute('href');
+      if (href && href.startsWith('/')) {
+        e.preventDefault();
+        const page = href.slice(1) || 'home';
+        setCurrentPage(page);
+        setSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleNavigation);
+    return () => document.removeEventListener('click', handleNavigation);
+  }, []);
+
+  // Close sidebar on route change
+  useEffect(() => {
     setSidebarOpen(false);
   }, [currentPage]);
 
@@ -53,7 +69,18 @@ export default function App() {
   };
 
   if (loading) {
-    return <Loading />;
+    return (
+      <div className="app light">
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          minHeight: '100vh' 
+        }}>
+          <Loading />
+        </div>
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -76,9 +103,17 @@ export default function App() {
 
   return (
     <div className="app light">
-      <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      <Navbar 
+        onMenuClick={() => setSidebarOpen(!sidebarOpen)} 
+        currentPage={currentPage}
+        onNavigate={setCurrentPage}
+      />
       <div className="app-container">
-        <Sidebar isOpen={sidebarOpen} />
+        <Sidebar 
+          isOpen={sidebarOpen} 
+          currentPage={currentPage}
+          onNavigate={setCurrentPage}
+        />
         <main className="app-main">
           {renderPage()}
         </main>

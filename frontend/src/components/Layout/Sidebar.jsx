@@ -1,21 +1,35 @@
 // components/Layout/Sidebar.jsx
 import './Layout.css';
 
-export default function Sidebar({ isOpen }) {
+export default function Sidebar({ isOpen, currentPage, onNavigate }) {
   const navItems = [
-    { icon: '🏠', label: 'Home', href: '/' },
-    { icon: '🎯', label: 'Generate Recipe', href: '/generate' },
-    { icon: '📚', label: 'History', href: '/history' },
-    { icon: '❤️', label: 'Favorites', href: '/favorites' },
-    { icon: '👤', label: 'Profile', href: '/profile' },
-    { icon: '📊', label: 'Analytics', href: '/analytics' },
+    { icon: '🏠', label: 'Home', page: 'home' },
+    { icon: '🎯', label: 'Generate Recipe', page: 'generate' },
+    { icon: '📚', label: 'History', page: 'history' },
+    { icon: '❤️', label: 'Favorites', page: 'favorites' },
+    { icon: '👤', label: 'Profile', page: 'profile' },
+    { icon: '📊', label: 'Analytics', page: 'analytics' },
   ];
+
+  const handleClick = (page) => {
+    if (onNavigate) {
+      onNavigate(page);
+    }
+  };
 
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <nav className="sidebar-nav">
         {navItems.map(item => (
-          <a key={item.href} href={item.href} className="nav-item">
+          <a 
+            key={item.page} 
+            href={`/${item.page === 'home' ? '' : item.page}`}
+            className={`nav-item ${currentPage === item.page ? 'active' : ''}`}
+            onClick={(e) => {
+              e.preventDefault();
+              handleClick(item.page);
+            }}
+          >
             <span className="nav-icon">{item.icon}</span>
             <span className="nav-label">{item.label}</span>
           </a>
