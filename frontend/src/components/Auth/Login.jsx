@@ -1,10 +1,10 @@
-
 // components/Auth/Login.jsx
 import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { authService } from '../../services/authService';
 import { validateEmail, validatePassword } from '../../utils/validators';
+import Register from './Register';  // ADD THIS IMPORT
 import Button from '../Common/Button';
 import './AuthForm.css';
 
