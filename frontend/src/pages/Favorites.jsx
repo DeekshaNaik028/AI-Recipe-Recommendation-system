@@ -1,0 +1,80 @@
+
+// pages/Favorites.jsx
+import { useEffect, useState } from 'react';
+import { recipeService } from '../services/recipeService';
+import { useToast } from '../hooks/useToast';
+import RecipeCard from '../components/Recipe/RecipeCard';
+import RecipeDetail from '../components/Recipe/RecipeDetail';
+import Loading from '../components/Common/Loading';
+import './Pages.css';
+
+export default function Favorites() {
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const { addToast } = useToast();
+
+  useEffect(() => {
+    loadFavorites();
+  }, []);
+
+  const loadFavorites = async () => {
+    try {
+      const data = await recipeService.getFavorites();
+      setFavorites(data.favorites);
+    } catch (error) {
+      addToast('Failed to load favorites', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveFavorite = async (id) => {
+    try {
+      await recipeService.toggleFavorite(id);
+      setFavorites(prev => prev.filter(r => r._id !== id));
+      addToast('Removed from favorites', 'success');
+    } catch (error) {
+      addToast('Failed to remove favorite', 'error');
+    }
+  };
+
+  if (loading) return <Loading />;
+
+  return (
+    <div className="page favorites-page">
+      <div className="page-header">
+        <h1>Favorite Recipes ❤️</h1>
+        <p>Your saved recipes</p>
+      </div>
+
+      {favorites.length === 0 ? (
+        <div className="empty-state">
+          <p>No favorites yet. <a href="/generate">Generate and save recipes!</a></p>
+        </div>
+      ) : (
+        <div className="recipes-grid">
+          {favorites.map(recipe => (
+            <div key={recipe._id} className="recipe-item">
+              <RecipeCard
+                recipe={recipe.recipe}
+                onToggleFavorite={() => handleRemoveFavorite(recipe._id)}
+                isFavorite={true}
+              />
+              <button 
+                onClick={() => setSelectedRecipe(recipe.recipe)}
+                className="action-btn full"
+              >
+                📖 View Full Recipe
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {selectedRecipe && (
+        <RecipeDetail recipe={selectedRecipe} onClose={() => setSelectedRecipe(null)} />
+      )}
+    </div>
+  );
+}

@@ -1,4 +1,4 @@
-# 🍳 AI-Powered Recipe Recommendation System (v2.0)
+# 🍳 AI-Powered Recipe Recommendation System
 
 A personalized recipe recommendation system that uses **voice input**, **mood tracking**, and **AI** to generate customized recipes based on available ingredients, dietary preferences, and health goals.
 
