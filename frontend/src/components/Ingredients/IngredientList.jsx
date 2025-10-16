@@ -1,4 +1,5 @@
 // components/Ingredients/IngredientList.jsx
+import { useState } from 'react';
 import './Ingredients.css';
 
 export default function IngredientList({ ingredients, onRemove, onAdd }) {

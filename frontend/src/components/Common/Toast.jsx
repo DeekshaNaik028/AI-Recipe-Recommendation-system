@@ -1,4 +1,4 @@
-/ components/Common/Toast.jsx
+// components/Common/Toast.jsx
 import { useEffect } from 'react';
 import './Common.css';
 
