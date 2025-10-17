@@ -1,13 +1,12 @@
-// utils/constants.js
 export const MOODS = [
-  { value: 'happy', emoji: '😊', label: 'Happy' },
-  { value: 'sad', emoji: '😢', label: 'Sad' },
-  { value: 'energetic', emoji: '⚡', label: 'Energetic' },
-  { value: 'tired', emoji: '😴', label: 'Tired' },
-  { value: 'stressed', emoji: '😰', label: 'Stressed' },
-  { value: 'calm', emoji: '😌', label: 'Calm' },
-  { value: 'excited', emoji: '🤩', label: 'Excited' },
-  { value: 'bored', emoji: '😑', label: 'Bored' },
+  { value: 'happy', label: 'Happy' },
+  { value: 'sad', label: 'Sad' },
+  { value: 'energetic', label: 'Energetic' },
+  { value: 'tired', label: 'Tired' },
+  { value: 'stressed', label: 'Stressed' },
+  { value: 'calm', label: 'Calm' },
+  { value: 'excited', label: 'Excited' },
+  { value: 'bored', label: 'Bored' },
 ];
 
 export const CUISINES = [

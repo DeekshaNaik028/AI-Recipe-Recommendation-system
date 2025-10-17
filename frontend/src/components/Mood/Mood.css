@@ -1,19 +1,32 @@
 /* ============================================
-   MOOD - Mood.css
+   MOOD SELECTOR - Modern Glassmorphic Design
    ============================================ */
 
 .mood-selector {
-  margin: 20px 0;
+  margin: 28px 0;
+  padding: 24px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s;
+}
+
+.mood-selector:hover {
+  border-color: var(--primary-light);
+  background: var(--bg-glass-dark);
 }
 
 .mood-selector h3 {
-  margin-bottom: 16px;
-  color: var(--dark);
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 700;
 }
 
 .mood-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 12px;
 }
 
@@ -21,47 +34,96 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 16px;
-  border: 2px solid var(--border);
-  background: white;
-  border-radius: 12px;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 12px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-glass);
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
 }
 
 .mood-button:hover {
-  border-color: var(--primary);
-  background: var(--light);
+  border-color: var(--primary-light);
+  background: var(--bg-glass-dark);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
 }
 
 .mood-button.active {
-  border-color: var(--primary);
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-color: transparent;
+  background: var(--gradient-primary);
   color: white;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+  transform: translateY(-6px) scale(1.05);
 }
 
 .mood-emoji {
-  font-size: 32px;
+  font-size: 36px;
+  display: block;
+  animation: float 3s ease-in-out infinite;
+}
+
+.mood-button.active .mood-emoji {
+  animation: bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
 
 .mood-label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
   text-align: center;
+  font-weight: 600;
+  text-transform: capitalize;
 }
 
 .theme-toggle {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 18px;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
 }
 
 .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--gradient-primary);
+  color: white;
+  border-color: transparent;
+  transform: scale(1.1) rotate(-10deg);
+  box-shadow: var(--shadow-md), 0 0 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .mood-grid {
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 10px;
+  }
+
+  .mood-button {
+    padding: 14px 10px;
+  }
+
+  .mood-emoji {
+    font-size: 32px;
+  }
+
+  .mood-label {
+    font-size: 12px;
+  }
 }

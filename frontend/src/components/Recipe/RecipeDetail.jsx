@@ -1,4 +1,4 @@
-// components/Recipe/RecipeDetail.jsx
+import { Clock, Users, TrendingUp, Flame, X } from 'lucide-react';
 import { formatTime } from '../../utils/formatters';
 import './Recipe.css';
 
@@ -6,14 +6,25 @@ export default function RecipeDetail({ recipe, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content recipe-detail" onClick={e => e.stopPropagation()}>
-        <button className="close-button" onClick={onClose}>✕</button>
+        <button className="close-button" onClick={onClose}>
+          <X size={24} strokeWidth={2} />
+        </button>
 
         <div className="detail-header">
           <h2>{recipe.title}</h2>
           <div className="detail-meta">
-            <span>⏱️ {formatTime(recipe.total_time)}</span>
-            <span>👥 {recipe.servings} servings</span>
-            <span>📊 {recipe.difficulty}</span>
+            <span>
+              <Clock size={18} strokeWidth={2} />
+              {formatTime(recipe.total_time)}
+            </span>
+            <span>
+              <Users size={18} strokeWidth={2} />
+              {recipe.servings} servings
+            </span>
+            <span>
+              <TrendingUp size={18} strokeWidth={2} />
+              {recipe.difficulty}
+            </span>
           </div>
         </div>
 
@@ -44,7 +55,10 @@ export default function RecipeDetail({ recipe, onClose }) {
           <div className="nutrition-grid">
             <div className="nutrition-card">
               <span className="nutrition-label">Calories</span>
-              <span className="nutrition-value">{Math.round(recipe.nutrition_info.calories)}</span>
+              <span className="nutrition-value">
+                <Flame size={20} strokeWidth={2} />
+                {Math.round(recipe.nutrition_info.calories)}
+              </span>
             </div>
             <div className="nutrition-card">
               <span className="nutrition-label">Protein</span>

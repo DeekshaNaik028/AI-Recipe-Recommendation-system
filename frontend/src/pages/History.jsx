@@ -1,11 +1,11 @@
-
-// pages/History.jsx
 import { useEffect, useState } from 'react';
-import { recipeService } from '../services/recipeService';
-import { useToast } from '../hooks/useToast';
-import RecipeCard from '../components/Recipe/RecipeCard';
-import RecipeDetail from '../components/Recipe/RecipeDetail';
-import Loading from '../components/Common/Loading';
+import { BookOpen, Trash2, Eye } from 'lucide-react';
+import { recipeService } from '../../services/recipeService';
+import { useToast } from '../../hooks/useToast';
+import RecipeCard from '../../components/Recipe/RecipeCard';
+import RecipeDetail from '../../components/Recipe/RecipeDetail';
+import Loading from '../../components/Common/Loading';
+import Button from '../../components/Common/Button';
 import './Pages.css';
 
 export default function History() {
@@ -55,13 +55,16 @@ export default function History() {
   return (
     <div className="page history-page">
       <div className="page-header">
-        <h1>Recipe History 📚</h1>
+        <BookOpen size={40} strokeWidth={1.5} className="header-icon" />
+        <h1>Recipe History</h1>
         <p>All your generated recipes</p>
       </div>
 
       {recipes.length === 0 ? (
         <div className="empty-state">
-          <p>No recipes yet. <a href="/generate">Generate your first recipe!</a></p>
+          <BookOpen size={48} strokeWidth={1.5} className="empty-icon" />
+          <p>No recipes yet.</p>
+          <Button href="/generate">Generate your first recipe</Button>
         </div>
       ) : (
         <div className="recipes-grid">
@@ -72,18 +75,24 @@ export default function History() {
                 onToggleFavorite={() => handleToggleFavorite(recipe._id)}
               />
               <div className="recipe-actions">
-                <button 
+                <Button 
                   onClick={() => setSelectedRecipe(recipe.recipe)}
-                  className="action-btn"
+                  variant="primary"
+                  size="sm"
+                  icon={Eye}
+                  full
                 >
-                  📖 View Full
-                </button>
-                <button 
+                  View Full
+                </Button>
+                <Button 
                   onClick={() => handleDelete(recipe._id)}
-                  className="action-btn danger"
+                  variant="danger"
+                  size="sm"
+                  icon={Trash2}
+                  full
                 >
-                  🗑️ Delete
-                </button>
+                  Delete
+                </Button>
               </div>
             </div>
           ))}

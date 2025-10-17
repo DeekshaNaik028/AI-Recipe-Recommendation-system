@@ -1,9 +1,9 @@
-// pages/Analytics.jsx
 import { useEffect, useState } from 'react';
-import { analyticsService } from '../services/analyticsService';
-import { useToast } from '../hooks/useToast';
-import Card from '../components/Common/Card';
-import Loading from '../components/Common/Loading';
+import { BarChart3, TrendingUp } from 'lucide-react';
+import { analyticsService } from '../../services/analyticsService';
+import { useToast } from '../../hooks/useToast';
+import Card from '../../components/Common/Card';
+import Loading from '../../components/Common/Loading';
 import './Pages.css';
 
 export default function Analytics() {
@@ -31,24 +31,37 @@ export default function Analytics() {
   return (
     <div className="page analytics-page">
       <div className="page-header">
-        <h1>Your Analytics 📊</h1>
+        <BarChart3 size={40} strokeWidth={1.5} className="header-icon" />
+        <h1>Your Analytics</h1>
         <p>Track your cooking journey</p>
       </div>
 
       <div className="stats-grid">
         <Card className="stat-card">
+          <div className="stat-icon">
+            <TrendingUp size={24} strokeWidth={2} />
+          </div>
           <h3>Recipes Generated</h3>
           <p className="stat-value">{analytics?.total_recipes_generated || 0}</p>
         </Card>
         <Card className="stat-card">
+          <div className="stat-icon">
+            <Heart size={24} strokeWidth={2} />
+          </div>
           <h3>Favorites</h3>
           <p className="stat-value">{analytics?.total_favorites || 0}</p>
         </Card>
         <Card className="stat-card">
+          <div className="stat-icon">
+            <TrendingUp size={24} strokeWidth={2} />
+          </div>
           <h3>Unique Ingredients</h3>
           <p className="stat-value">{analytics?.unique_ingredients_used || 0}</p>
         </Card>
         <Card className="stat-card">
+          <div className="stat-icon">
+            <Clock size={24} strokeWidth={2} />
+          </div>
           <h3>Avg Cook Time</h3>
           <p className="stat-value">{Math.round(analytics?.avg_cooking_time_minutes || 0)}m</p>
         </Card>

@@ -1,4 +1,3 @@
-// components/Common/Button.jsx
 import './Common.css';
 
 export default function Button({ 
@@ -7,6 +6,7 @@ export default function Button({
   size = 'md', 
   disabled = false, 
   full = false,
+  icon: Icon = null,
   ...props 
 }) {
   return (
@@ -15,6 +15,7 @@ export default function Button({
       disabled={disabled}
       {...props}
     >
+      {Icon && <Icon size={18} strokeWidth={2} />}
       {children}
     </button>
   );

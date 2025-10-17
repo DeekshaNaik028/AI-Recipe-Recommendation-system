@@ -1,5 +1,5 @@
-// components/Ingredients/IngredientList.jsx
 import { useState } from 'react';
+import { X, Plus } from 'lucide-react';
 import './Ingredients.css';
 
 export default function IngredientList({ ingredients, onRemove, onAdd }) {
@@ -28,7 +28,7 @@ export default function IngredientList({ ingredients, onRemove, onAdd }) {
                 onClick={() => onRemove(idx)}
                 className="remove-btn"
               >
-                ✕
+                <X size={16} strokeWidth={2} />
               </button>
             </div>
           ))
@@ -42,7 +42,10 @@ export default function IngredientList({ ingredients, onRemove, onAdd }) {
           onChange={(e) => setNewIngredient(e.target.value)}
           placeholder="Add more ingredients..."
         />
-        <button type="submit">+ Add</button>
+        <button type="submit">
+          <Plus size={18} strokeWidth={2} />
+          Add
+        </button>
       </form>
     </div>
   );

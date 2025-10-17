@@ -1,15 +1,15 @@
-// components/Layout/Navbar.jsx
 import { useState, useRef, useEffect } from 'react';
+import { Menu, LogOut, Settings, Moon, Sun } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import ThemeToggle from '../Theme/ThemeToggle';
+import { useTheme } from '../../hooks/useTheme';
 import './Layout.css';
 
 export default function Navbar({ onMenuClick, currentPage, onNavigate }) {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -37,7 +37,13 @@ export default function Navbar({ onMenuClick, currentPage, onNavigate }) {
     <nav className="navbar">
       <div className="nav-content">
         <div className="nav-left">
-          <button className="menu-button" onClick={onMenuClick}>☰</button>
+          <button 
+            className="menu-button" 
+            onClick={onMenuClick}
+            aria-label="Toggle menu"
+          >
+            <Menu size={24} strokeWidth={2} />
+          </button>
           <div 
             className="nav-brand"
             onClick={() => handleNavigation('home')}
@@ -49,14 +55,22 @@ export default function Navbar({ onMenuClick, currentPage, onNavigate }) {
         </div>
 
         <div className="nav-right">
-          <ThemeToggle />
+          <button 
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          >
+            {theme === 'light' ? <Moon size={20} strokeWidth={2} /> : <Sun size={20} strokeWidth={2} />}
+          </button>
           
           <div className="dropdown" ref={dropdownRef}>
             <button 
               className="user-button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
-              👤 {user?.name || 'User'}
+              <User size={18} strokeWidth={2} />
+              <span>{user?.name || 'User'}</span>
             </button>
             
             {dropdownOpen && (
@@ -68,16 +82,8 @@ export default function Navbar({ onMenuClick, currentPage, onNavigate }) {
                     handleNavigation('profile');
                   }}
                 >
+                  <Settings size={16} strokeWidth={2} />
                   Profile
-                </a>
-                <a 
-                  href="/analytics" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigation('analytics');
-                  }}
-                >
-                  Analytics
                 </a>
                 <button 
                   onClick={() => { 
@@ -85,6 +91,7 @@ export default function Navbar({ onMenuClick, currentPage, onNavigate }) {
                     setDropdownOpen(false); 
                   }}
                 >
+                  <LogOut size={16} strokeWidth={2} />
                   Logout
                 </button>
               </div>

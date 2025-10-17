@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { Mic, Square, Loader } from 'lucide-react';
 import { ingredientService } from '../../services/ingredientService';
 import { useToast } from '../../hooks/useToast';
 import './Ingredients.css';
@@ -49,7 +50,6 @@ export default function VoiceRecorder({ onExtract }) {
   };
 
   const processAudio = async (blob) => {
-    // FIX: Removed recording time check - let backend validate
     setLoading(true);
     try {
       const file = new File([blob], 'recording.wav', { type: 'audio/wav' });
@@ -79,7 +79,22 @@ export default function VoiceRecorder({ onExtract }) {
         disabled={loading}
         type="button"
       >
-        {loading ? 'Processing...' : recording ? 'Stop' : 'Record'}
+        {loading ? (
+          <>
+            <Loader size={20} strokeWidth={2} className="spinner-small" />
+            Processing...
+          </>
+        ) : recording ? (
+          <>
+            <Square size={20} strokeWidth={2} />
+            Stop Recording
+          </>
+        ) : (
+          <>
+            <Mic size={20} strokeWidth={2} />
+            Start Recording
+          </>
+        )}
       </button>
       
       {recording && <span className="timer">{recordingTime}s</span>}

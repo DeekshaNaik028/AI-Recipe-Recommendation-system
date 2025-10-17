@@ -1,11 +1,11 @@
-
-// pages/Favorites.jsx
 import { useEffect, useState } from 'react';
-import { recipeService } from '../services/recipeService';
-import { useToast } from '../hooks/useToast';
-import RecipeCard from '../components/Recipe/RecipeCard';
-import RecipeDetail from '../components/Recipe/RecipeDetail';
-import Loading from '../components/Common/Loading';
+import { Heart, Eye } from 'lucide-react';
+import { recipeService } from '../../services/recipeService';
+import { useToast } from '../../hooks/useToast';
+import RecipeCard from '../../components/Recipe/RecipeCard';
+import RecipeDetail from '../../components/Recipe/RecipeDetail';
+import Loading from '../../components/Common/Loading';
+import Button from '../../components/Common/Button';
 import './Pages.css';
 
 export default function Favorites() {
@@ -44,13 +44,16 @@ export default function Favorites() {
   return (
     <div className="page favorites-page">
       <div className="page-header">
-        <h1>Favorite Recipes ❤️</h1>
+        <Heart size={40} strokeWidth={1.5} className="header-icon" />
+        <h1>Favorite Recipes</h1>
         <p>Your saved recipes</p>
       </div>
 
       {favorites.length === 0 ? (
         <div className="empty-state">
-          <p>No favorites yet. <a href="/generate">Generate and save recipes!</a></p>
+          <Heart size={48} strokeWidth={1.5} className="empty-icon" />
+          <p>No favorites yet.</p>
+          <Button href="/generate">Generate and save recipes!</Button>
         </div>
       ) : (
         <div className="recipes-grid">
@@ -61,12 +64,15 @@ export default function Favorites() {
                 onToggleFavorite={() => handleRemoveFavorite(recipe._id)}
                 isFavorite={true}
               />
-              <button 
+              <Button 
                 onClick={() => setSelectedRecipe(recipe.recipe)}
-                className="action-btn full"
+                variant="primary"
+                size="sm"
+                icon={Eye}
+                full
               >
-                📖 View Full Recipe
-              </button>
+                View Full Recipe
+              </Button>
             </div>
           ))}
         </div>

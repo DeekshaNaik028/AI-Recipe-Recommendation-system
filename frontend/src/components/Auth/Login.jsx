@@ -1,10 +1,10 @@
-// components/Auth/Login.jsx
 import { useState } from 'react';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { authService } from '../../services/authService';
 import { validateEmail, validatePassword } from '../../utils/validators';
-import Register from './Register';  // ADD THIS IMPORT
+import Register from './Register';
 import Button from '../Common/Button';
 import './AuthForm.css';
 
@@ -50,7 +50,7 @@ export default function Login() {
       <div className="auth-card">
         <div className="auth-header">
           <h1>🍳 MoodMunch</h1>
-          <p>AI-Powered Recipe Recommendations</p>
+          <p>Cook What You Feel</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
@@ -58,7 +58,7 @@ export default function Login() {
             <label>Email</label>
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder="your@email.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
@@ -70,7 +70,7 @@ export default function Login() {
             <div className="password-input">
               <input
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
@@ -79,13 +79,23 @@ export default function Login() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="toggle-password"
+                aria-label="Toggle password visibility"
               >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
+                {showPassword ? (
+                  <EyeOff size={18} strokeWidth={2} />
+                ) : (
+                  <Eye size={18} strokeWidth={2} />
+                )}
               </button>
             </div>
           </div>
 
-          <Button type="submit" disabled={loading} full>
+          <Button 
+            type="submit" 
+            disabled={loading} 
+            full
+            icon={LogIn}
+          >
             {loading ? 'Logging in...' : 'Login'}
           </Button>
         </form>
