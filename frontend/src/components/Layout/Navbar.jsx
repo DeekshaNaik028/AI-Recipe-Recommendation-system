@@ -1,5 +1,6 @@
+// src/components/Layout/Navbar.jsx - FIXED
 import { useState, useRef, useEffect } from 'react';
-import { Menu, LogOut, Settings, Moon, Sun } from 'lucide-react';
+import { Menu, LogOut, Settings, Moon, Sun, User } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
 import './Layout.css';

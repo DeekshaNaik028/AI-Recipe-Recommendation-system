@@ -1,9 +1,10 @@
+// src/pages/Analytics.jsx - FIXED IMPORTS
 import { useEffect, useState } from 'react';
-import { BarChart3, TrendingUp } from 'lucide-react';
-import { analyticsService } from '../../services/analyticsService';
-import { useToast } from '../../hooks/useToast';
-import Card from '../../components/Common/Card';
-import Loading from '../../components/Common/Loading';
+import { BarChart3, TrendingUp, Heart, Clock } from 'lucide-react';
+import { analyticsService } from '../services/analyticsService';
+import { useToast } from '../hooks/useToast';
+import Card from '../components/Common/Card';
+import Loading from '../components/Common/Loading';
 import './Pages.css';
 
 export default function Analytics() {
@@ -37,28 +38,28 @@ export default function Analytics() {
       </div>
 
       <div className="stats-grid">
-        <Card className="stat-card">
+        <Card className="stat-card gradient-primary">
           <div className="stat-icon">
             <TrendingUp size={24} strokeWidth={2} />
           </div>
           <h3>Recipes Generated</h3>
           <p className="stat-value">{analytics?.total_recipes_generated || 0}</p>
         </Card>
-        <Card className="stat-card">
+        <Card className="stat-card gradient-secondary">
           <div className="stat-icon">
             <Heart size={24} strokeWidth={2} />
           </div>
           <h3>Favorites</h3>
           <p className="stat-value">{analytics?.total_favorites || 0}</p>
         </Card>
-        <Card className="stat-card">
+        <Card className="stat-card gradient-warm">
           <div className="stat-icon">
             <TrendingUp size={24} strokeWidth={2} />
           </div>
           <h3>Unique Ingredients</h3>
           <p className="stat-value">{analytics?.unique_ingredients_used || 0}</p>
         </Card>
-        <Card className="stat-card">
+        <Card className="stat-card gradient-cool">
           <div className="stat-icon">
             <Clock size={24} strokeWidth={2} />
           </div>

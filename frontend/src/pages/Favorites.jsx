@@ -1,11 +1,12 @@
+// src/pages/Favorites.jsx - FIXED IMPORTS
 import { useEffect, useState } from 'react';
 import { Heart, Eye } from 'lucide-react';
-import { recipeService } from '../../services/recipeService';
-import { useToast } from '../../hooks/useToast';
-import RecipeCard from '../../components/Recipe/RecipeCard';
-import RecipeDetail from '../../components/Recipe/RecipeDetail';
-import Loading from '../../components/Common/Loading';
-import Button from '../../components/Common/Button';
+import { recipeService } from '../services/recipeService';
+import { useToast } from '../hooks/useToast';
+import RecipeCard from '../components/Recipe/RecipeCard';
+import RecipeDetail from '../components/Recipe/RecipeDetail';
+import Loading from '../components/Common/Loading';
+import Button from '../components/Common/Button';
 import './Pages.css';
 
 export default function Favorites() {
