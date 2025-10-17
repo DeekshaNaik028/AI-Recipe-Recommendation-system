@@ -1,284 +1,128 @@
-/* ============================================
-   PAGES - Pages.css
-   ============================================ */
-
-.page {
-  animation: fadeIn 0.3s ease-in;
+.generate-recipe-page {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.page-header {
-  margin-bottom: 30px;
-}
-
-.page-header h1 {
-  font-size: 32px;
-  color: var(--dark);
-  margin-bottom: 8px;
-}
-
-.page-header p {
-  font-size: 16px;
-  color: #666;
-}
-
-.home-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
-}
-
-.home-card {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: var(--shadow);
-  transition: all 0.2s;
-}
-
-.home-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
-.home-card h3 {
-  margin-bottom: 12px;
-  color: var(--dark);
-  font-size: 20px;
-}
-
-.home-card p {
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 16px;
-  line-height: 1.6;
-}
-
-.card-link {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.card-link:hover {
-  color: var(--secondary);
-}
-
-.generate-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-}
-
-@media (max-width: 1024px) {
-  .generate-layout {
-    grid-template-columns: 1fr;
-  }
+.generate-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 .generate-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  animation: fadeIn 0.3s ease-out;
 }
 
-.generate-result {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  min-height: 400px;
+.generate-form.hidden {
+  display: none;
 }
 
-.recipes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+.input-card {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid #E2E8F0;
 }
 
-.recipe-item {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.input-section {
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #E2E8F0;
 }
 
-.recipe-actions {
-  display: flex;
-  gap: 10px;
+.input-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
-.action-btn {
-  flex: 1;
-  padding: 12px;
-  background: var(--light);
-  border: 2px solid var(--primary);
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-
-.action-btn:hover {
-  background: var(--primary);
-  color: white;
-}
-
-.action-btn.danger {
-  border-color: var(--error);
-}
-
-.action-btn.danger:hover {
-  background: var(--error);
-  color: white;
-}
-
-.action-btn.full {
-  width: 100%;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: #999;
-}
-
-.empty-state p {
+.input-section h3 {
   font-size: 18px;
-}
-
-.empty-state a {
-  color: var(--primary);
-  text-decoration: none;
   font-weight: 600;
+  color: #0F172A;
+  margin-bottom: 16px;
 }
 
-.recent-recipes {
-  margin-top: 30px;
-}
-
-.recent-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.recent-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  background: var(--light);
-  border-radius: 8px;
-}
-
-.mood-tag {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.profile-view,
-.profile-edit {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.profile-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px;
-  background: var(--light);
-  border-radius: 8px;
-}
-
-.profile-label {
-  font-weight: 600;
-  color: var(--dark);
-}
-
-.profile-value {
-  color: #666;
-}
-
-.profile-actions,
-.form-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.stat-card {
+.section-divider {
   text-align: center;
+  margin: 24px 0;
+  position: relative;
 }
 
-.stat-card h3 {
-  margin-bottom: 12px;
-  color: #666;
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background: #E2E8F0;
+}
+
+.section-divider::before {
+  left: 0;
+}
+
+.section-divider::after {
+  right: 0;
+}
+
+.section-divider span {
+  background: white;
+  padding: 0 12px;
+  color: #94A3B8;
+  font-weight: 600;
   font-size: 14px;
 }
 
-.stat-value {
-  font-size: 36px;
-  font-weight: 700;
-  color: var(--primary);
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
-.top-list {
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.generate-btn {
+  padding: 14px 28px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin-top: 8px;
+}
+
+.recipe-result-section {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.top-item {
-  display: flex;
-  align-items: center;
   gap: 12px;
-  padding: 12px;
-  background: var(--light);
-  border-radius: 8px;
+  margin-top: 16px;
 }
 
-.rank {
-  font-weight: 600;
-  color: var(--primary);
-  min-width: 40px;
+.result-actions button {
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
 }
 
-.name {
-  flex: 1;
-  color: var(--dark);
-}
-
-.count {
-  color: #999;
-  font-size: 14px;
-}
-
-@media (max-width: 768px) {
-  .page-header h1 {
-    font-size: 24px;
-  }
-
-  .home-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .recipes-grid {
-    grid-template-columns: 1fr;
-  }
+.view-recipe-btn {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6) !important;
+  color: white !important;
 }

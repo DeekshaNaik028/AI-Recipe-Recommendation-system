@@ -2,7 +2,7 @@ import google.generativeai as genai
 import logging
 from typing import List, Dict, Any
 import os
-from pathlib import Path
+import asyncio
 
 from app.core.config import get_settings
 from app.utils.exceptions import CustomException
@@ -17,43 +17,26 @@ class VoiceIngredientService:
         self.model = None
         self.initialized = False
         
-        # Common ingredient variations for validation
         self.ingredient_database = {
-            # Vegetables
             'tomato', 'tomatoes', 'onion', 'onions', 'garlic', 'carrot', 'carrots',
             'potato', 'potatoes', 'sweet potato', 'bell pepper', 'peppers', 'broccoli',
             'spinach', 'lettuce', 'cucumber', 'celery', 'mushroom', 'mushrooms',
             'zucchini', 'eggplant', 'cabbage', 'cauliflower', 'peas', 'corn',
-            'ginger', 'chili', 'chilies', 'green beans', 'asparagus',
-            
-            # Fruits
+            'ginger', 'chili', 'chilies', 'green beans', 'asparagus', 'kale',
             'apple', 'apples', 'banana', 'bananas', 'orange', 'oranges', 'lemon',
             'lime', 'avocado', 'mango', 'pineapple', 'strawberry', 'strawberries',
-            'grapes', 'watermelon', 'berries', 'blueberries',
-            
-            # Proteins
-            'chicken', 'chicken breast', 'beef', 'steak', 'pork', 'bacon', 'ham',
-            'fish', 'salmon', 'tuna', 'cod', 'shrimp', 'prawns', 'egg', 'eggs',
-            'tofu', 'beans', 'lentils', 'chickpeas', 'paneer',
-            
-            # Dairy
-            'milk', 'cheese', 'cheddar', 'mozzarella', 'yogurt', 'butter', 'cream',
-            'heavy cream', 'sour cream', 'cottage cheese',
-            
-            # Grains & Pasta
-            'rice', 'basmati rice', 'pasta', 'spaghetti', 'noodles', 'bread',
-            'flour', 'wheat flour', 'oats', 'quinoa', 'couscous',
-            
-            # Herbs & Spices
-            'basil', 'cilantro', 'coriander', 'parsley', 'mint', 'rosemary',
-            'thyme', 'oregano', 'cumin', 'turmeric', 'paprika', 'cinnamon',
-            
-            # Condiments & Oils
-            'olive oil', 'vegetable oil', 'coconut oil', 'salt', 'pepper',
-            'soy sauce', 'vinegar', 'honey', 'sugar', 'ketchup', 'mustard',
-            
-            # Nuts & Seeds
-            'almonds', 'cashews', 'peanuts', 'walnuts', 'sesame seeds', 'chia seeds'
+            'grapes', 'watermelon', 'berries', 'blueberries', 'coconut',
+            'chicken', 'beef', 'steak', 'pork', 'bacon', 'ham', 'fish', 'salmon',
+            'tuna', 'cod', 'shrimp', 'prawns', 'egg', 'eggs', 'tofu', 'beans',
+            'lentils', 'chickpeas', 'paneer', 'milk', 'cheese', 'yogurt',
+            'butter', 'cream', 'heavy cream', 'sour cream', 'cottage cheese',
+            'rice', 'pasta', 'spaghetti', 'noodles', 'bread', 'flour', 'wheat flour',
+            'oats', 'quinoa', 'couscous', 'basil', 'cilantro', 'coriander',
+            'parsley', 'mint', 'rosemary', 'thyme', 'oregano', 'cumin',
+            'turmeric', 'paprika', 'cinnamon', 'olive oil', 'vegetable oil',
+            'coconut oil', 'salt', 'pepper', 'soy sauce', 'vinegar', 'honey',
+            'sugar', 'ketchup', 'mustard', 'almonds', 'cashews', 'peanuts',
+            'walnuts', 'sesame seeds', 'chia seeds', 'dill', 'fennel'
         }
     
     async def initialize(self):
@@ -61,266 +44,182 @@ class VoiceIngredientService:
         try:
             genai.configure(api_key=self.settings.GEMINI_API_KEY)
             
-            # Try multiple model versions for compatibility
-            model_options = [
-                'gemini-1.5-flash',  # Stable version
-                'gemini-1.5-pro',    # Pro version
-                'gemini-2.0-flash-exp'  # Experimental
-            ]
+            model_options = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp']
             
             for model_name in model_options:
                 try:
-                    logger.info(f"Trying to initialize model: {model_name}")
+                    logger.info(f"Initializing model: {model_name}")
                     self.model = genai.GenerativeModel(model_name)
                     
-                    # Test the model
-                    test_prompt = "Respond with 'OK' if initialized"
-                    response = self.model.generate_content(test_prompt)
-                    
-                    if response.text.strip().upper() == 'OK':
+                    test_response = self.model.generate_content("Say OK")
+                    if test_response and test_response.text:
                         self.initialized = True
-                        logger.info(f"Voice Ingredient Service initialized successfully with {model_name}")
+                        logger.info(f"Model initialized: {model_name}")
                         return
-                except Exception as model_error:
-                    logger.warning(f"Failed to initialize {model_name}: {model_error}")
+                except Exception as e:
+                    logger.warning(f"Model {model_name} failed: {e}")
                     continue
             
-            raise Exception("All model initialization attempts failed")
+            raise Exception("No suitable model available")
                 
         except Exception as e:
-            logger.error(f"Failed to initialize Gemini AI: {str(e)}")
-            logger.warning("Voice ingredient detection will not work")
+            logger.error(f"Gemini initialization failed: {str(e)}")
             self.initialized = False
     
-    async def transcribe_and_extract_ingredients(
-        self, 
-        audio_file_path: str
-    ) -> List[str]:
+    async def transcribe_and_extract_ingredients(self, audio_file_path: str) -> List[str]:
         """
-        Transcribe audio and extract ingredients using Gemini AI
+        Extract ingredients from audio file
+        CRITICAL FIX: Using synchronous API call in async context properly
         """
         try:
             if not self.initialized:
-                logger.error("AI not initialized! Check your GEMINI_API_KEY")
-                raise Exception("Voice service not properly initialized")
+                raise Exception("AI service not initialized")
             
-            logger.info(f"Processing audio file: {audio_file_path}")
+            logger.info(f"Processing audio: {audio_file_path}")
             
-            # Read audio file
             with open(audio_file_path, 'rb') as f:
                 audio_data = f.read()
             
-            logger.info(f"Audio file size: {len(audio_data)} bytes")
+            if len(audio_data) < 5000:
+                raise Exception("Audio file too small - record for at least 2 seconds")
             
-            # Create detailed prompt for ingredient extraction
-            prompt = """
-            You are listening to an audio recording where someone is listing food ingredients they have available.
+            logger.info(f"Audio size: {len(audio_data) / 1024:.1f} KB")
             
-            TASK:
-            1. Carefully transcribe EXACTLY what you hear
-            2. Extract ALL food ingredients mentioned
-            3. Normalize ingredient names to singular form (e.g., "tomatoes" → "tomato")
-            4. Remove quantities, measurements, and filler words
-            5. Keep the ingredient names simple and standard
-            
-            EXAMPLES:
-            Audio: "I have three tomatoes, two onions, and some garlic"
-            Output: tomato, onion, garlic
-            
-            Audio: "chicken breast, milk, curry leaves, coriander, and basil"
-            Output: chicken, milk, curry leaves, coriander, basil
-            
-            Audio: "I've got rice, beans, bell peppers"
-            Output: rice, beans, bell pepper
-            
-            IMPORTANT: 
-            - Return ONLY a comma-separated list of ingredients
-            - Use lowercase
-            - No numbers, no extra text
-            - Include ALL ingredients you hear, even herbs and spices
-            
-            Now, listen to the audio and extract the ingredients:
-            """
-            
-            # Prepare audio data for Gemini
             import mimetypes
             mime_type, _ = mimetypes.guess_type(audio_file_path)
-            if not mime_type:
-                mime_type = 'audio/wav'  # Default fallback
+            if not mime_type or not mime_type.startswith('audio/'):
+                mime_type = 'audio/wav'
             
-            logger.info(f"Audio MIME type: {mime_type}")
+            logger.info(f"MIME type: {mime_type}")
             
-            # Generate response with inline audio data
-            logger.info("Sending to Gemini for transcription...")
+            prompt = """Extract food ingredients from this audio. 
+            Return ONLY a comma-separated list of ingredient names in lowercase.
+            Examples:
+            - "I have tomato, onion, garlic" → tomato, onion, garlic
+            - "chicken breast and rice" → chicken, rice
             
-            # Use the correct API format with inline data
-            response = self.model.generate_content(
-                [
-                    prompt,
-                    {
-                        "mime_type": mime_type,
-                        "data": audio_data
-                    }
-                ],
-                generation_config=genai.types.GenerationConfig(
-                    temperature=0.2,
-                    top_p=0.8,
-                    top_k=40,
-                    max_output_tokens=1000,
-                ),
-                request_options={"timeout": 60}
+            Rules:
+            - Use singular form (tomatoes → tomato)
+            - Remove quantities and measurements
+            - Only return ingredient names
+            - Separate with commas
+            """
+            
+            # Run in executor to avoid blocking
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(
+                None,
+                lambda: self.model.generate_content(
+                    [prompt, {"mime_type": mime_type, "data": audio_data}],
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=0.1,
+                        max_output_tokens=500
+                    )
+                )
             )
             
-            if not response.text:
-                raise Exception("Empty response from Gemini AI")
+            if not response or not response.text:
+                raise Exception("No response from AI")
             
-            logger.info(f"Raw Gemini response: {response.text}")
+            logger.info(f"AI response: {response.text}")
             
-            # Parse the response
             ingredients = self._parse_ingredient_response(response.text)
-            
             if not ingredients:
-                raise Exception("No ingredients extracted from audio")
+                raise Exception("No ingredients detected")
             
-            logger.info(f"Successfully extracted ingredients: {ingredients}")
-            
+            logger.info(f"Extracted: {ingredients}")
             return ingredients
             
         except Exception as e:
-            logger.error(f"Error in audio transcription: {str(e)}")
-            logger.error(f"Error type: {type(e).__name__}")
-            # Don't use fallback - raise the error so user knows it failed
+            logger.error(f"Audio extraction error: {str(e)}")
             raise Exception(f"Failed to process audio: {str(e)}")
     
     async def extract_from_text(self, text: str) -> List[str]:
-        """
-        Extract ingredients from text input (for manual typing fallback)
-        """
+        """Extract ingredients from text input"""
         try:
+            if not text or len(text.strip()) < 2:
+                raise Exception("Text too short")
+            
             if not self.initialized:
                 return self._simple_text_extraction(text)
             
-            prompt = f"""
-            Extract all food ingredients from this text: "{text}"
+            prompt = f"""Extract food ingredients from: "{text}"
+            Return ONLY comma-separated ingredient names in lowercase.
+            No extra text."""
             
-            Rules:
-            1. Extract only actual food ingredients
-            2. Normalize names (plural to singular, remove quantities)
-            3. Return comma-separated list in lowercase
-            4. Ignore quantities, measurements, and cooking actions
-            
-            Return ONLY the ingredient list.
-            """
-            
-            response = self.model.generate_content(
-                prompt,
-                generation_config=genai.types.GenerationConfig(
-                    temperature=0.3,
-                    max_output_tokens=300,
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(
+                None,
+                lambda: self.model.generate_content(
+                    prompt,
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=0.1,
+                        max_output_tokens=300
+                    )
                 )
             )
             
             ingredients = self._parse_ingredient_response(response.text)
-            logger.info(f"Extracted from text: {ingredients}")
-            
+            logger.info(f"Text extraction: {ingredients}")
             return ingredients
             
         except Exception as e:
-            logger.error(f"Error extracting from text: {str(e)}")
+            logger.error(f"Text extraction error: {str(e)}")
             return self._simple_text_extraction(text)
     
     def _parse_ingredient_response(self, response_text: str) -> List[str]:
-        """Parse AI response into clean ingredient list"""
-        # Remove any markdown, extra whitespace
+        """Parse and clean ingredient response"""
         cleaned = response_text.strip().lower()
         cleaned = cleaned.replace('```', '').replace('*', '').strip()
         
-        # Split by common separators
         if ',' in cleaned:
             ingredients = [i.strip() for i in cleaned.split(',')]
         elif '\n' in cleaned:
-            ingredients = [i.strip() for i in cleaned.split('\n')]
+            ingredients = [i.strip() for i in cleaned.split('\n') if i.strip()]
         else:
-            ingredients = [i.strip() for i in cleaned.split()]
+            ingredients = cleaned.split()
         
-        # Clean and validate
-        valid_ingredients = []
-        for ing in ingredients:
-            # Remove common prefixes/suffixes
-            ing = ing.strip('-•. ')
-            
-            # Skip empty or very short strings
-            if len(ing) < 2:
-                continue
-            
-            # Skip common non-ingredients
-            skip_words = ['and', 'the', 'some', 'a', 'an', 'of', 'with', 'have', 'got']
-            if ing in skip_words:
-                continue
-            
-            # Add to valid list
-            valid_ingredients.append(ing)
-        
-        # Remove duplicates while preserving order
+        valid = []
         seen = set()
-        result = []
-        for ing in valid_ingredients:
-            if ing not in seen:
-                seen.add(ing)
-                result.append(ing)
+        skip = {'and', 'the', 'some', 'a', 'an', 'of', 'with', 'or', 'is', 'are'}
         
-        return result[:self.settings.MAX_INGREDIENTS_DETECTED]
+        for ing in ingredients:
+            ing = ing.strip('-•.,"\' ')
+            if len(ing) > 1 and ing not in skip and ing not in seen:
+                valid.append(ing)
+                seen.add(ing)
+        
+        return valid[:self.settings.MAX_INGREDIENTS_DETECTED]
     
     def _simple_text_extraction(self, text: str) -> List[str]:
-        """Simple keyword-based extraction fallback"""
+        """Fallback text extraction"""
         text_lower = text.lower()
-        found_ingredients = []
+        found = []
+        seen = set()
         
-        for ingredient in self.ingredient_database:
-            if ingredient in text_lower:
-                # Get base form (singular)
-                base = ingredient.rstrip('s')
-                if base not in found_ingredients:
-                    found_ingredients.append(base)
+        for ingredient in sorted(self.ingredient_database, key=len, reverse=True):
+            if ingredient in text_lower and ingredient not in seen:
+                found.append(ingredient)
+                seen.add(ingredient)
         
-        if not found_ingredients:
-            # Try splitting and matching
-            words = text_lower.replace(',', ' ').split()
-            for word in words:
-                word = word.strip('.,!?')
-                if word in self.ingredient_database:
-                    found_ingredients.append(word)
-        
-        return found_ingredients[:self.settings.MAX_INGREDIENTS_DETECTED]
-    
-    async def _fallback_extraction(self) -> List[str]:
-        """Fallback when AI is unavailable"""
-        logger.warning("Using fallback ingredient list")
-        return ["tomato", "onion", "garlic", "olive oil", "salt", "pepper"]
+        return found[:self.settings.MAX_INGREDIENTS_DETECTED]
     
     async def validate_ingredients(self, ingredients: List[str]) -> Dict[str, Any]:
-        """Validate and suggest corrections for ingredients"""
+        """Validate ingredients"""
         validated = []
         suggestions = {}
         
         for ing in ingredients:
             ing_lower = ing.lower().strip()
-            
-            # Direct match
             if ing_lower in self.ingredient_database:
                 validated.append(ing_lower)
             else:
-                # Find similar ingredients
-                similar = [
-                    db_ing for db_ing in self.ingredient_database
-                    if ing_lower in db_ing or db_ing in ing_lower
-                ]
-                
+                similar = [db_ing for db_ing in self.ingredient_database 
+                          if ing_lower in db_ing or db_ing in ing_lower]
                 if similar:
                     validated.append(similar[0])
                     suggestions[ing] = similar[0]
                 else:
-                    # Keep original if no match found
                     validated.append(ing_lower)
         
         return {
@@ -329,3 +228,5 @@ class VoiceIngredientService:
             "original_count": len(ingredients),
             "validated_count": len(validated)
         }
+
+

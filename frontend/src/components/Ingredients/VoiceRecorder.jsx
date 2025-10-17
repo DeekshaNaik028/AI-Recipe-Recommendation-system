@@ -1,6 +1,4 @@
-
-// components/Ingredients/VoiceRecorder.jsx
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ingredientService } from '../../services/ingredientService';
 import { useToast } from '../../hooks/useToast';
 import './Ingredients.css';
@@ -9,6 +7,8 @@ export default function VoiceRecorder({ onExtract }) {
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const timerRef = useRef(null);
   const { addToast } = useToast();
 
   const startRecording = async () => {
@@ -19,36 +19,51 @@ export default function VoiceRecorder({ onExtract }) {
 
       recorder.ondataavailable = (e) => chunks.push(e.data);
       recorder.onstop = async () => {
+        clearInterval(timerRef.current);
         const blob = new Blob(chunks, { type: 'audio/wav' });
         await processAudio(blob);
         stream.getTracks().forEach(track => track.stop());
+        setRecordingTime(0);
       };
 
       recorder.start();
       setMediaRecorder(recorder);
       setRecording(true);
-      addToast('Recording started...', 'info');
+      setRecordingTime(0);
+      
+      timerRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+      
+      addToast('Recording started', 'info');
     } catch (error) {
       addToast('Microphone access denied', 'error');
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorder) {
+    if (mediaRecorder && recording) {
       mediaRecorder.stop();
       setRecording(false);
     }
   };
 
   const processAudio = async (blob) => {
+    // FIX: Removed recording time check - let backend validate
     setLoading(true);
     try {
       const file = new File([blob], 'recording.wav', { type: 'audio/wav' });
       const response = await ingredientService.extractFromAudio(file);
-      onExtract(response.ingredients);
-      addToast(`Extracted ${response.ingredients.length} ingredients!`, 'success');
+      
+      if (response.ingredients && response.ingredients.length > 0) {
+        onExtract(response.ingredients);
+        addToast(`Found ${response.ingredients.length} ingredients`, 'success');
+      } else {
+        addToast('No ingredients detected', 'warning');
+      }
     } catch (error) {
-      addToast(error.response?.data?.detail || 'Failed to process audio', 'error');
+      const msg = error.response?.data?.detail || error.message;
+      addToast(msg, 'error');
     } finally {
       setLoading(false);
     }
@@ -56,15 +71,19 @@ export default function VoiceRecorder({ onExtract }) {
 
   return (
     <div className="voice-recorder">
-      <h3>🎤 Voice Input</h3>
+      <h3>Record Ingredients</h3>
+      
       <button
-        className={`record-button ${recording ? 'active' : ''}`}
+        className={`record-btn ${recording ? 'active' : ''}`}
         onClick={recording ? stopRecording : startRecording}
         disabled={loading}
+        type="button"
       >
-        {loading ? '⏳ Processing...' : recording ? '⏹️ Stop Recording' : '🎤 Start Recording'}
+        {loading ? 'Processing...' : recording ? 'Stop' : 'Record'}
       </button>
-      <p className="recorder-hint">Speak your ingredients naturally</p>
+      
+      {recording && <span className="timer">{recordingTime}s</span>}
+      <p className="hint">Speak naturally: tomato, chicken, rice...</p>
     </div>
   );
 }
