@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+// src/pages/Home.jsx - FIXED IMPORTS
+import { useEffect, useState, useCallback } from 'react';
 import { Zap, Heart, BookOpen, BarChart3, Home as HomeIcon } from 'lucide-react';
-import { recipeService } from '../../services/recipeService';
-import { useToast } from '../../hooks/useToast';
-import Card from '../../components/Common/Card';
-import Button from '../../components/Common/Button';
-import Loading from '../../components/Common/Loading';
+import { recipeService } from '../services/recipeService';
+import { useToast } from '../hooks/useToast';
+import Card from '../components/Common/Card';
+import Loading from '../components/Common/Loading';
 import './Pages.css';
 
 export default function Home() {
@@ -12,11 +12,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const { addToast } = useToast();
 
-  useEffect(() => {
-    loadStats();
-  }, []);
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     try {
       const data = await recipeService.getHistory(5);
       setStats(data);
@@ -25,7 +21,11 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
 
   if (loading) return <Loading />;
 

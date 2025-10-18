@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+// src/pages/Profile.jsx - FIXED IMPORTS
+import { useEffect, useState, useCallback } from 'react';
 import { User, Edit2, Save, X } from 'lucide-react';
-import { authService } from '../../services/authService';
-import { useToast } from '../../hooks/useToast';
-import Card from '../../components/Common/Card';
-import Button from '../../components/Common/Button';
+import { authService } from '../services/authService';
+import { useToast } from '../hooks/useToast';
+import Card from '../components/Common/Card';
+import Button from '../components/Common/Button';
+import Loading from '../components/Common/Loading';
 import './Pages.css';
 
 export default function Profile() {
@@ -13,11 +15,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({});
   const { addToast } = useToast();
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       const data = await authService.getProfile();
       setProfile(data);
@@ -27,7 +25,11 @@ export default function Profile() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -48,6 +50,7 @@ export default function Profile() {
       <div className="page-header">
         <User size={40} strokeWidth={1.5} className="header-icon" />
         <h1>Your Profile</h1>
+        <p>Manage your account settings</p>
       </div>
 
       <Card>
@@ -73,13 +76,22 @@ export default function Profile() {
                 {profile?.allergies?.join(', ') || 'None'}
               </span>
             </div>
-            <Button 
-              onClick={() => setEditing(true)} 
-              variant="secondary"
-              icon={Edit2}
-            >
-              Edit Profile
-            </Button>
+            <div className="profile-item">
+              <span className="profile-label">Health Goals:</span>
+              <span className="profile-value">
+                {profile?.health_goals?.join(', ') || 'None'}
+              </span>
+            </div>
+            <div style={{ marginTop: '24px' }}>
+              <Button 
+                onClick={() => setEditing(true)} 
+                variant="secondary"
+                icon={Edit2}
+                full
+              >
+                Edit Profile
+              </Button>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSave} className="profile-edit">
@@ -89,12 +101,54 @@ export default function Profile() {
                 type="text"
                 value={formData.name || ''}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
+                required
               />
             </div>
+            
+            <div className="form-group">
+              <label>Dietary Preferences (comma separated)</label>
+              <input
+                type="text"
+                value={formData.dietary_preferences?.join(', ') || ''}
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  dietary_preferences: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                })}
+                placeholder="e.g., vegetarian, gluten-free"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Allergies (comma separated)</label>
+              <input
+                type="text"
+                value={formData.allergies?.join(', ') || ''}
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  allergies: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                })}
+                placeholder="e.g., peanuts, shellfish"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Health Goals (comma separated)</label>
+              <input
+                type="text"
+                value={formData.health_goals?.join(', ') || ''}
+                onChange={(e) => setFormData({
+                  ...formData, 
+                  health_goals: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                })}
+                placeholder="e.g., weight loss, muscle gain"
+              />
+            </div>
+
             <div className="form-actions">
               <Button 
                 type="submit"
                 icon={Save}
+                variant="primary"
               >
                 Save Changes
               </Button>
