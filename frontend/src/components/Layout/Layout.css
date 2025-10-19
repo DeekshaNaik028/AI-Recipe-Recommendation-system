@@ -71,7 +71,7 @@
 
 .brand-icon {
   font-size: 36px;
-  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.4));
+  filter: drop-shadow(0 4px 8px rgba(134, 22, 87, 0.4));
   animation: float 3s ease-in-out infinite;
 }
 
@@ -265,7 +265,7 @@
 .nav-item.active {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: var(--shadow-md), 0 0 20px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(134, 22, 87, 0.3);
   transform: translateX(5px);
 }
 
@@ -353,6 +353,30 @@
   font-size: 13px;
   padding-top: 16px;
   border-top: 1px solid var(--border);
+}
+
+.theme-toggle {
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle:hover {
+  background: var(--gradient-primary);
+  color: white;
+  border-color: transparent;
+  transform: scale(1.1) rotate(-10deg);
+  box-shadow: var(--shadow-md), 0 0 15px rgba(134, 22, 87, 0.3);
 }
 
 @media (max-width: 768px) {

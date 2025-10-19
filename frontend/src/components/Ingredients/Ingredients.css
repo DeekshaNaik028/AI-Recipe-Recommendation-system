@@ -35,7 +35,7 @@
 .text-input:hover {
   border-color: transparent;
   background: var(--bg-glass-dark);
-  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+  box-shadow: 0 12px 40px rgba(134, 22, 87, 0.15);
   transform: translateY(-2px);
 }
 
@@ -99,7 +99,7 @@
   gap: 12px;
   justify-content: center;
   width: 100%;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 24px rgba(134, 22, 87, 0.3);
   position: relative;
   overflow: hidden;
 }
@@ -121,23 +121,23 @@
 
 .record-btn:hover:not(:disabled) {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4), var(--shadow-glow);
+  box-shadow: 0 12px 32px rgba(134, 22, 87, 0.4), var(--shadow-glow);
 }
 
 .record-btn.active {
   background: var(--gradient-secondary);
   animation: recordPulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  box-shadow: 0 8px 24px rgba(245, 87, 108, 0.4);
+  box-shadow: 0 8px 24px rgba(213, 106, 160, 0.4);
 }
 
 @keyframes recordPulse {
   0%, 100% { 
     transform: scale(1);
-    box-shadow: 0 8px 24px rgba(245, 87, 108, 0.4);
+    box-shadow: 0 8px 24px rgba(213, 106, 160, 0.4);
   }
   50% { 
     transform: scale(1.03);
-    box-shadow: 0 12px 32px rgba(245, 87, 108, 0.6);
+    box-shadow: 0 12px 32px rgba(213, 106, 160, 0.6);
   }
 }
 
@@ -185,7 +185,7 @@
   font-size: 14px;
   font-weight: 800;
   animation: slideIn 0.3s ease-out;
-  box-shadow: 0 4px 16px rgba(245, 87, 108, 0.3);
+  box-shadow: 0 4px 16px rgba(213, 106, 160, 0.3);
 }
 
 @keyframes slideIn {
@@ -228,7 +228,7 @@
 .text-form textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 4px rgba(134, 22, 87, 0.1);
   background: var(--bg-glass-dark);
 }
 
@@ -340,7 +340,7 @@
   border-radius: 24px;
   font-size: 14px;
   font-weight: 700;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 16px rgba(134, 22, 87, 0.3);
   animation: badgeIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   position: relative;
   overflow: hidden;
@@ -420,7 +420,7 @@
 .add-ingredient-form input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 4px rgba(134, 22, 87, 0.1);
   background: var(--bg-glass-dark);
 }
 
@@ -433,7 +433,7 @@
   cursor: pointer;
   font-weight: 800;
   transition: all 0.3s;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 16px rgba(134, 22, 87, 0.3);
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -442,7 +442,7 @@
 
 .add-ingredient-form button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(134, 22, 87, 0.4);
 }
 
 @media (max-width: 600px) {

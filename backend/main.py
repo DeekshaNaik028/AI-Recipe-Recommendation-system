@@ -473,6 +473,8 @@ async def toggle_favorite_recipe(
             detail="Failed to update favorites"
         )
 
+# Replace the /recipes/favorites endpoint in main.py with this:
+
 @app.get("/recipes/favorites")
 async def get_favorite_recipes(
     current_user: str = Depends(get_current_user),
@@ -485,22 +487,46 @@ async def get_favorite_recipes(
         favorite_docs = await favorite_cursor.to_list(length=None)
         
         if not favorite_docs:
+            logger.info(f"No favorites found for user {current_user}")
             return {
                 "favorites": [],
                 "total": 0
             }
         
-        # Extract recipe IDs
+        # Extract recipe IDs and convert to ObjectId
         from bson import ObjectId
-        recipe_ids = [ObjectId(doc["recipe_id"]) for doc in favorite_docs]
+        recipe_ids = []
+        for doc in favorite_docs:
+            try:
+                recipe_id = doc.get("recipe_id")
+                if recipe_id:
+                    # Handle both string and ObjectId
+                    if isinstance(recipe_id, str):
+                        recipe_ids.append(ObjectId(recipe_id))
+                    else:
+                        recipe_ids.append(recipe_id)
+            except Exception as e:
+                logger.warning(f"Invalid recipe_id in favorites: {e}")
+                continue
+        
+        if not recipe_ids:
+            logger.info(f"No valid recipe IDs in favorites for user {current_user}")
+            return {
+                "favorites": [],
+                "total": 0
+            }
         
         # Get the actual recipes from recipe_history
         recipe_cursor = db.database.recipe_history.find({"_id": {"$in": recipe_ids}})
         recipes = await recipe_cursor.to_list(length=None)
         
-        # Convert ObjectIds to strings
+        # Convert ObjectIds to strings for JSON serialization
         for recipe in recipes:
-            recipe["_id"] = str(recipe["_id"])
+            if "_id" in recipe:
+                recipe["_id"] = str(recipe["_id"])
+            if "recipe" in recipe and isinstance(recipe["recipe"], dict):
+                if "_id" in recipe["recipe"]:
+                    recipe["recipe"]["_id"] = str(recipe["recipe"]["_id"])
         
         logger.info(f"Retrieved {len(recipes)} favorite recipes for user {current_user}")
         
@@ -512,10 +538,12 @@ async def get_favorite_recipes(
     except Exception as e:
         logger.error(f"Get favorites error: {str(e)}")
         logger.exception(e)
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to retrieve favorites"
-        )
+        # Return empty instead of error
+        return {
+            "favorites": [],
+            "total": 0,
+            "error": str(e)
+        }
 
 # ============== USER PROFILE ==============
 

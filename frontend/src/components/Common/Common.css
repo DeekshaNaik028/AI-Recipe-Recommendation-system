@@ -279,7 +279,7 @@
 }
 
 .toast-close:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(134, 22, 87, 0.1);
   color: var(--text-primary);
 }
 
@@ -459,7 +459,7 @@
   outline: none;
   border-color: var(--primary);
   background: var(--bg-glass);
-  box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.1);
+  box-shadow: 0 0 0 3px rgba(134, 22, 87, 0.1);
 }
 
 @media (max-width: 600px) {
@@ -475,5 +475,3 @@
     width: auto;
   }
 }
-
-

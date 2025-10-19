@@ -16,7 +16,7 @@
   right: -10%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(134, 22, 87, 0.15) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
@@ -29,7 +29,7 @@
   left: -10%;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(196, 113, 237, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(213, 106, 160, 0.15) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
@@ -135,64 +135,3 @@
 .password-input input {
   width: 100%;
 }
-
-.toggle-password {
-  position: absolute;
-  right: 14px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  transition: transform 0.2s;
-  color: var(--text-secondary);
-}
-
-.toggle-password:hover {
-  transform: scale(1.2);
-  color: var(--text-primary);
-}
-
-.checkbox-group {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  transition: all 0.2s;
-}
-
-.checkbox-label:hover {
-  color: var(--text-primary);
-}
-
-.checkbox-label input {
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
-  accent-color: var(--primary);
-}
-
-@media (max-width: 480px) {
-  .auth-card {
-    padding: 32px 24px;
-    border-radius: 20px;
-  }
-
-  .auth-header h1 {
-    font-size: 28px;
-  }
-
-  .checkbox-group {
-    grid-template-columns: 1fr;
-  }
-}
-

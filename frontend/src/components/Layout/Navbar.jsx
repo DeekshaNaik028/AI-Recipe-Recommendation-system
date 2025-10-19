@@ -1,6 +1,6 @@
-// src/components/Layout/Navbar.jsx - FIXED
+// src/components/Layout/Navbar.jsx - UPDATED
 import { useState, useRef, useEffect } from 'react';
-import { Menu, LogOut, Settings, Moon, Sun, User } from 'lucide-react';
+import { Menu, LogOut, Settings, Moon, Sun, User, ChefHat } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
 import './Layout.css';
@@ -50,7 +50,7 @@ export default function Navbar({ onMenuClick, currentPage, onNavigate }) {
             onClick={() => handleNavigation('home')}
             style={{ cursor: 'pointer' }}
           >
-            <span className="brand-icon">🍳</span>
+            <ChefHat className="brand-icon" size={32} strokeWidth={2} />
             <span className="brand-name">MoodMunch</span>
           </div>
         </div>

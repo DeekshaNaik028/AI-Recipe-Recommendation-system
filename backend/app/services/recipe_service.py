@@ -20,30 +20,25 @@ class RecipeService:
     
     async def initialize(self):
         try:
+            # Configure Gemini API
             genai.configure(api_key=self.settings.GEMINI_API_KEY)
             
-            # Use only the model that actually works
+            # Use the working model
             model_name = 'gemini-2.0-flash-exp'
             
-            try:
-                logger.info(f"Initializing recipe model: {model_name}")
-                self.model = genai.GenerativeModel(model_name)
-                
-                # Test the model
-                test_prompt = "Hello, respond with 'OK' if you're working."
-                response = self.model.generate_content(test_prompt)
-                
-                if response.text.strip().upper() == 'OK':
-                    self.initialized = True
-                    logger.info(f"✅ Recipe service initialized with {model_name}")
-                    return
-                else:
-                    raise Exception("Model test failed - did not respond with OK")
-                    
-            except Exception as model_error:
-                logger.error(f"Failed to initialize {model_name}: {model_error}")
-                raise Exception(f"Recipe model initialization failed: {model_error}")
+            logger.info(f"Initializing recipe model: {model_name}")
+            self.model = genai.GenerativeModel(model_name)
             
+            # Test the model
+            test_prompt = "Respond with 'OK' if working."
+            response = self.model.generate_content(test_prompt)
+            
+            if response and response.text and 'OK' in response.text.upper():
+                self.initialized = True
+                logger.info(f"✅ Recipe service initialized successfully with {model_name}")
+            else:
+                raise Exception("Model test failed")
+                    
         except Exception as e:
             logger.error(f"Failed to initialize Gemini AI: {str(e)}")
             logger.warning("Recipe generation will use fallback mode")
@@ -69,11 +64,10 @@ class RecipeService:
             MoodEnum.BORED: "creative and unique recipes to spark culinary interest"
         }
         
-        # Format ingredients as a clear list
         ingredients_list = '\n'.join([f"- {ing}" for ing in ingredients])
         
         prompt = f"""
-You are an expert chef. Create a recipe using ONLY the ingredients provided by the user.
+You are an expert chef. Create a REAL, PRACTICAL recipe using the ingredients provided.
 
 USER'S AVAILABLE INGREDIENTS:
 {ingredients_list}
@@ -86,57 +80,35 @@ USER PREFERENCES:
 - Cuisine Preference: {cuisine_preference if cuisine_preference and cuisine_preference != 'any' else 'Any cuisine'}
 - Servings: 2
 
-CRITICAL RULES - YOU MUST FOLLOW THESE:
-1. ⚠️ Use ONLY the ingredients listed above as main ingredients
-2. ✅ You MAY add common pantry staples that every household has:
-   - Basic spices: salt, black pepper, red chili powder, turmeric, cumin powder, coriander powder
-   - Basic oils: cooking oil, olive oil
-   - Basic aromatics: ginger, garlic (if not already in the list)
-   - Optional garnishes: lemon juice, water
-3. ❌ DO NOT add any other main ingredients (no paneer, no cheese, no nuts, no vegetables not in the list)
-4. ❌ DO NOT substitute ingredients - use what's provided
-5. ✅ If an ingredient in the list seems insufficient, be creative with pantry staples
-6. ✅ Include ALL ingredients from the user's list in the recipe
+CRITICAL RULES:
+1. Use ONLY the ingredients listed above as main ingredients
+2. You MAY add common pantry staples: salt, pepper, oil, water, basic spices
+3. Create a REAL recipe that can actually be cooked
+4. Include ALL user's ingredients in the recipe
+5. Make it practical and delicious
 
-IMPORTANT: The user specifically provided these ingredients because they have them. Don't suggest alternatives!
-
-Return ONLY valid JSON in this EXACT format (no markdown, no extra text):
+Return ONLY valid JSON (no markdown, no extra text):
 
 {{
-  "title": "Creative Recipe Name",
-  "description": "Brief appetizing description (1-2 sentences)",
+  "title": "Recipe Name",
+  "description": "Brief description (1-2 sentences)",
   "ingredients": [
-    "500g chicken breast, diced",
-    "3 medium tomatoes, chopped",
-    "1 large onion, sliced",
-    "10-12 fresh basil leaves",
-    "1/2 cup milk",
-    "2 tbsp fresh coriander, chopped",
-    "8-10 curry leaves",
-    "1 tbsp cooking oil",
-    "1 tsp salt",
-    "1/2 tsp black pepper",
-    "1 inch ginger, minced",
-    "3 cloves garlic, minced"
+    "500g ingredient1",
+    "2 medium ingredient2",
+    "1 tbsp oil",
+    "1 tsp salt"
   ],
   "instructions": [
-    "Heat 1 tbsp cooking oil in a large pan over medium heat",
-    "Add curry leaves and let them crackle for 30 seconds",
-    "Add sliced onions and sauté until golden brown, about 5-7 minutes",
-    "Add minced ginger and garlic, cook for 1 minute until fragrant",
-    "Add diced chicken and cook until it turns white on all sides, about 8 minutes",
-    "Add chopped tomatoes, salt, and black pepper. Cook until tomatoes are soft, about 5 minutes",
-    "Pour in milk and bring to a gentle simmer. Cook for 10 minutes until chicken is fully cooked",
-    "Add torn basil leaves and chopped coriander",
-    "Simmer for 2 more minutes to blend flavors",
-    "Serve hot with rice or roti"
+    "Step 1 instruction",
+    "Step 2 instruction",
+    "Step 3 instruction"
   ],
   "prep_time": 15,
   "cook_time": 30,
   "total_time": 45,
   "servings": 2,
   "difficulty": "easy",
-  "cuisine_type": "indian",
+  "cuisine_type": "italian",
   "nutrition_info": {{
     "calories": 380,
     "protein": 35,
@@ -146,10 +118,10 @@ Return ONLY valid JSON in this EXACT format (no markdown, no extra text):
     "sugar": 8,
     "sodium": 480
   }},
-  "tags": ["happy", "indian", "chicken-curry", "homemade"]
+  "tags": ["mood-based", "homemade"]
 }}
 
-Generate the recipe now using ONLY the user's ingredients plus basic pantry staples:
+Generate a real, cookable recipe now:
 """
         return prompt.strip()
     
@@ -175,21 +147,16 @@ Generate the recipe now using ONLY the user's ingredients plus basic pantry stap
                 cleaned_text = json_match.group()
             
             # Fix common JSON errors
-            # Fix trailing commas
             cleaned_text = re.sub(r',(\s*[}\]])', r'\1', cleaned_text)
-            # Fix missing commas between array elements
             cleaned_text = re.sub(r'"\s*\n\s*"', '",\n"', cleaned_text)
             
-            logger.info(f"Attempting to parse JSON (length: {len(cleaned_text)} chars)")
+            logger.info(f"Parsing JSON response (length: {len(cleaned_text)} chars)")
             
             try:
                 recipe_data = json.loads(cleaned_text)
             except json.JSONDecodeError as json_error:
-                logger.error(f"JSON decode error: {json_error}")
-                logger.error(f"Problematic JSON snippet: {cleaned_text[max(0, json_error.pos-50):json_error.pos+50]}")
-                
+                logger.error(f"JSON decode error at position {json_error.pos}")
                 # Try more aggressive cleaning
-                # Remove any text before first { and after last }
                 start = cleaned_text.find('{')
                 end = cleaned_text.rfind('}')
                 if start != -1 and end != -1:
@@ -201,7 +168,6 @@ Generate the recipe now using ONLY the user's ingredients plus basic pantry stap
             # Extract and validate fields
             nutrition_data = recipe_data.get('nutrition_info', {})
             
-            # Ensure all nutrition fields are present with defaults
             nutrition_info = NutritionInfo(
                 calories=float(nutrition_data.get('calories', 300)),
                 protein=float(nutrition_data.get('protein', 15)),
@@ -227,71 +193,15 @@ Generate the recipe now using ONLY the user's ingredients plus basic pantry stap
                 tags=recipe_data.get('tags', [])
             )
             
-            logger.info(f"Successfully parsed recipe: {recipe.title}")
+            logger.info(f"✅ Successfully parsed recipe: {recipe.title}")
             return recipe
             
         except Exception as e:
             logger.error(f"Recipe parsing error: {str(e)}")
-            logger.error(f"Raw response text: {response_text[:500]}...")
-            
-            # Don't fallback immediately - try to extract what we can
-            try:
-                # Manual extraction as last resort
-                return self._manual_extract_recipe(response_text)
-            except Exception as extract_error:
-                logger.error(f"Manual extraction also failed: {extract_error}")
-                raise Exception(f"Failed to parse recipe: {str(e)}")
-    
-    def _manual_extract_recipe(self, text: str) -> RecipeResponse:
-        """Manual extraction when JSON parsing fails"""
-        logger.info("Attempting manual extraction from response")
-        
-        # Try to extract title
-        title_match = re.search(r'"title"\s*:\s*"([^"]+)"', text)
-        title = title_match.group(1) if title_match else "AI Generated Recipe"
-        
-        # Extract description
-        desc_match = re.search(r'"description"\s*:\s*"([^"]+)"', text)
-        description = desc_match.group(1) if desc_match else "A delicious homemade recipe"
-        
-        # Extract ingredients array
-        ingredients = []
-        ing_match = re.search(r'"ingredients"\s*:\s*\[(.*?)\]', text, re.DOTALL)
-        if ing_match:
-            ing_text = ing_match.group(1)
-            ingredients = re.findall(r'"([^"]+)"', ing_text)
-        
-        # Extract instructions array
-        instructions = []
-        inst_match = re.search(r'"instructions"\s*:\s*\[(.*?)\]', text, re.DOTALL)
-        if inst_match:
-            inst_text = inst_match.group(1)
-            instructions = re.findall(r'"([^"]+)"', inst_text)
-        
-        logger.info(f"Manual extraction: {len(ingredients)} ingredients, {len(instructions)} steps")
-        
-        if not ingredients or not instructions:
-            raise Exception("Insufficient data extracted")
-        
-        return RecipeResponse(
-            title=title,
-            description=description,
-            ingredients=ingredients,
-            instructions=instructions,
-            prep_time=15,
-            cook_time=30,
-            total_time=45,
-            servings=2,
-            difficulty="medium",
-            cuisine_type="fusion",
-            nutrition_info=NutritionInfo(
-                calories=300, protein=20, carbs=35, 
-                fat=12, fiber=5, sugar=6, sodium=450
-            ),
-            tags=["ai-generated"]
-        )
+            raise Exception(f"Failed to parse recipe: {str(e)}")
     
     def _create_fallback_recipe(self, ingredients: List[str], mood: MoodEnum) -> RecipeResponse:
+        """Only used if AI is completely unavailable"""
         mood_titles = {
             MoodEnum.HAPPY: "Cheerful",
             MoodEnum.SAD: "Comforting",
@@ -339,12 +249,17 @@ Generate the recipe now using ONLY the user's ingredients plus basic pantry stap
         cuisine_preference: Optional[str] = None,
         max_retries: int = 3
     ) -> RecipeResponse:
-        if not self.initialized:
-            logger.warning("AI not initialized, using fallback recipe")
-            return self._create_fallback_recipe(ingredients, mood)
         
         if not ingredients:
             raise CustomException(status_code=400, detail="At least one ingredient is required")
+        
+        # Check if AI is initialized
+        if not self.initialized:
+            logger.error("❌ AI not initialized - check your GEMINI_API_KEY in .env file")
+            raise CustomException(
+                status_code=503, 
+                detail="AI service not available. Please check API configuration."
+            )
         
         prompt = self._create_recipe_prompt(
             ingredients=ingredients,
@@ -357,7 +272,7 @@ Generate the recipe now using ONLY the user's ingredients plus basic pantry stap
         
         for attempt in range(max_retries):
             try:
-                logger.info(f"Generating recipe (attempt {attempt + 1}/{max_retries})")
+                logger.info(f"🔄 Generating recipe (attempt {attempt + 1}/{max_retries})")
                 
                 response = self.model.generate_content(
                     prompt,
@@ -370,29 +285,31 @@ Generate the recipe now using ONLY the user's ingredients plus basic pantry stap
                     request_options={"timeout": 120}
                 )
                 
-                if not response.text:
+                if not response or not response.text:
                     raise Exception("Empty response from AI model")
                 
-                logger.info(f"Received response from Gemini ({len(response.text)} chars)")
-                logger.debug(f"Raw response preview: {response.text[:200]}...")
+                logger.info(f"📥 Received response from Gemini ({len(response.text)} chars)")
                 
                 recipe = self._parse_recipe_response(response.text)
                 
                 # Validate recipe has minimum required data
                 if not recipe.ingredients or not recipe.instructions:
-                    raise Exception("Recipe missing essential data (ingredients or instructions)")
+                    raise Exception("Recipe missing essential data")
                 
-                logger.info(f"✅ Recipe generated successfully: {recipe.title}")
+                logger.info(f"✅ Real recipe generated: {recipe.title}")
                 return recipe
                     
             except Exception as e:
-                logger.error(f"Recipe generation attempt {attempt + 1} failed: {str(e)}")
+                logger.error(f"❌ Attempt {attempt + 1} failed: {str(e)}")
                 
                 if attempt == max_retries - 1:
-                    logger.warning("All attempts failed, using fallback recipe")
-                    return self._create_fallback_recipe(ingredients, mood)
+                    logger.error("All attempts failed")
+                    raise CustomException(
+                        status_code=500,
+                        detail="Failed to generate recipe. Please try again."
+                    )
                 
-                # Wait a bit before retrying
                 await asyncio.sleep(1)
         
-        return self._create_fallback_recipe(ingredients, mood)
+        # This should never be reached
+        raise CustomException(status_code=500, detail="Recipe generation failed")

@@ -7,7 +7,7 @@
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 24px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   box-shadow: var(--shadow-md);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -15,7 +15,7 @@
 .recipe-card:hover {
   transform: translateY(-6px);
   border-color: var(--primary-light);
-  box-shadow: var(--shadow-lg), 0 0 20px rgba(255, 107, 157, 0.2);
+  box-shadow: var(--shadow-lg), 0 0 20px rgba(134, 22, 87, 0.2);
 }
 
 .recipe-header {
@@ -36,7 +36,7 @@
 
 .favorite-btn {
   background: var(--bg-glass);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 24px;
   cursor: pointer;
@@ -47,18 +47,21 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  color: var(--text-secondary);
 }
 
 .favorite-btn:hover {
   transform: scale(1.1);
   border-color: var(--primary-light);
-  background: rgba(255, 107, 157, 0.1);
+  background: rgba(134, 22, 87, 0.1);
+  color: var(--primary);
 }
 
 .favorite-btn.active {
   background: var(--gradient-primary);
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+  box-shadow: 0 4px 12px rgba(134, 22, 87, 0.3);
+  color: white;
 }
 
 .recipe-description {
@@ -86,7 +89,7 @@
   border-radius: 20px;
   color: var(--text-secondary);
   font-weight: 600;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
 }
 
 .recipe-nutrition {
@@ -94,7 +97,7 @@
   grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   gap: 12px;
   padding-top: 18px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border);
 }
 
 .nutrition-item {
@@ -169,7 +172,7 @@
   background: var(--bg-glass);
   border-radius: 20px;
   color: var(--text-secondary);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
 }
 
 .detail-description {
@@ -216,7 +219,7 @@
 
 .ingredients-list li:hover,
 .instructions-list li:hover {
-  border-left-color: var(--secondary-light);
+  border-left-color: var(--secondary);
   background: var(--bg-glass-dark);
   transform: translateX(4px);
 }
@@ -240,7 +243,7 @@
   gap: 10px;
   padding: 18px;
   background: var(--bg-glass);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: 14px;
   text-align: center;
   transition: all 0.3s;
@@ -250,7 +253,7 @@
   border-color: var(--primary-light);
   background: var(--bg-glass-dark);
   transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 8px 16px rgba(134, 22, 87, 0.2);
 }
 
 .tags-list {
@@ -267,14 +270,14 @@
   border-radius: 20px;
   font-size: 12px;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(134, 22, 87, 0.3);
   transition: all 0.3s;
   text-transform: capitalize;
 }
 
 .tag:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 16px rgba(134, 22, 87, 0.4);
 }
 
 /* Responsive */

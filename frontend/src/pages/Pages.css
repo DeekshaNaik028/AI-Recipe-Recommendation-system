@@ -54,7 +54,7 @@
   background: var(--gradient-primary);
   border-radius: 20px;
   color: white;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 24px rgba(134, 22, 87, 0.3);
   animation: float 3s ease-in-out infinite;
 }
 
@@ -237,7 +237,7 @@
 
 .home-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow-xl), 0 0 40px rgba(102, 126, 234, 0.2);
+  box-shadow: var(--shadow-xl), 0 0 40px rgba(134, 22, 87, 0.2);
   border-color: transparent;
 }
 
@@ -262,7 +262,7 @@
   background: var(--gradient-primary);
   border-radius: 16px;
   color: white;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 24px rgba(134, 22, 87, 0.3);
   transition: all 0.3s;
 }
 
@@ -385,7 +385,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.03) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% 50%, rgba(134, 22, 87, 0.03) 0%, transparent 70%);
 }
 
 .empty-state:hover {
@@ -410,7 +410,6 @@
   margin-bottom: 28px;
   line-height: 1.6;
 }
-
 /* ============================================
    RECENT RECIPES SECTION
    ============================================ */
@@ -535,7 +534,7 @@
 .top-item:hover {
   background: var(--bg-glass-dark);
   transform: translateX(6px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.15);
+  box-shadow: 0 6px 20px rgba(134, 22, 87, 0.15);
 }
 
 .top-item:hover::before {
@@ -567,7 +566,7 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 800;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(134, 22, 87, 0.3);
 }
 
 /* ============================================

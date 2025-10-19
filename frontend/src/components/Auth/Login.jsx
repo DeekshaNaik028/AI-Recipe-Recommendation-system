@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, LogIn, ChefHat } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { authService } from '../../services/authService';
@@ -49,7 +49,10 @@ export default function Login() {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h1>🍳 MoodMunch</h1>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '12px' }}>
+            <ChefHat size={40} strokeWidth={2} style={{ color: '#861657' }} />
+            <h1>MoodMunch</h1>
+          </div>
           <p>Cook What You Feel</p>
         </div>
 
